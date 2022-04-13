@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net"
+	"os"
 	pb "service2/proto"
 	"time"
 
@@ -21,7 +22,12 @@ type Profile struct {
 }
 
 func main() {
-	listenPort, err := net.Listen("tcp", ":19003")
+	ENV_GRPC_SERVER_PORT := os.Genenv("GRPC_SERVER_PORT")
+	if len(ENV_GRPC_SERVER_PORT) == 0 {
+		ENV_GRPC_SERVER_PORT = "19003"
+	}
+
+	listenPort, err := net.Listen("tcp", ":"+ENV_GRPC_SERVER_PORT)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -194,8 +200,18 @@ func (h *User) User(cts context.Context, req *pb.UserRequest) (*pb.UserProfile, 
 }
 
 func ClientRedis() *redis.Client {
+	ENV_REDIS_HOST := os.Genenv("REDIS_HOST")
+	if len(ENV_REDIS_HOST) == 0 {
+		ENV_REDIS_HOST = "localhost"
+	}
+
+	ENV_REDIS_PORT := os.Genenv("REDIS_PORT")
+	if len(ENV_REDIS_PORT) == 0 {
+		ENV_REDIS_PORT = "6379"
+	}
+
 	return redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+		Addr: ENV_REDIS_HOST + ":" + ENV_REDIS_PORT,
 		DB:   0,
 	})
 }

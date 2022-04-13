@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -14,8 +15,13 @@ import (
 )
 
 func main() {
+	ENV_API_PORT := os.Getenv("API_PORT")
+	if len(ENV_API_PORT) == 0 {
+		ENV_API_PORT = "8080"
+	}
+
 	http.HandleFunc("/users/", UsersHandler)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+ENV_API_PORT, nil)
 }
 
 type User struct {
@@ -122,7 +128,17 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 }
 */
 func CreateUsers(w http.ResponseWriter, r *http.Request, id string, name string, gender string, born string) {
-	con, err := grpc.Dial("127.0.0.1:19003", grpc.WithInsecure())
+	ENV_GRPC_SERVER_HOST := os.Getenv("GRPC_SERVER_HOST")
+	if len(ENV_GRPC_SERVER_HOST) == 0 {
+		ENV_GRPC_SERVER_HOST = "localhost"
+	}
+
+	ENV_GRPC_SERVER_PORT := os.Getenv("GRPC_SERVER_PORT")
+	if len(ENV_GRPC_SERVER_PORT) == 0 {
+		ENV_GRPC_SERVER_PORT = "19003"
+	}
+
+	con, err := grpc.Dial(ENV_GRPC_SERVER_HOST+":"+ENV_GRPC_SERVER_PORT, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("client connection error:", err)
 	}
