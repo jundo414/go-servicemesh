@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service2-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service2
+  template:
+    metadata:
+      labels:
+        app: service2
+    spec:
+      containers:
+        - name: service2
+          image: service2
+          ports:
+          - containerPort: 19003
+            name: service2
+          env:
+            - name: GRPC_SERVER_PORT
+              value: 19003
+            - name: REDIS_HOST
+              value: redis-service.default.svc.cluster.local
+            - name: REDIS_PORT
+              value: 6379
+      volumes:
+        - name: service2-data
+          persistentVolumeClaim:
+            claimName: service2-volume
