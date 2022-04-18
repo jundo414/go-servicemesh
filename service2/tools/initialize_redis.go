@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"service2/models"
 	"time"
 
@@ -12,8 +13,18 @@ import (
 )
 
 func ClientRedis() *redis.Client {
+	ENV_REDIS_HOST := os.Getenv("REDIS_HOST")
+	if len(ENV_REDIS_HOST) == 0 {
+		ENV_REDIS_HOST = "localhost"
+	}
+
+	ENV_REDIS_PORT := os.Getenv("REDIS_PORT")
+	if len(ENV_REDIS_PORT) == 0 {
+		ENV_REDIS_PORT = "6379"
+	}
+
 	return redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+		Addr: ENV_REDIS_HOST + ":" + ENV_REDIS_PORT,
 		DB:   0,
 	})
 }

@@ -5,6 +5,7 @@ metadata:
   name: redis
   labels:
     app: redis
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -12,17 +13,16 @@ spec:
       app: redis
   template:
     metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
       labels:
         app: redis
     spec:
       containers:
-      - name: database
+      - name: redis
         image: docker.io/redis:6.2.6-alpine
         ports:
           - containerPort: 6379
-        volumeMounts:
-        - name: redis-data
-          mountPath: /var/lib/redis
       volumes:
       - name: redis-data
         persistentVolumeClaim:

@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: service1
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -10,25 +11,24 @@ spec:
       app: service1
   template:
     metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
       labels:
         app: service1
     spec:
       containers:
         - name: service1
-          image: service1:latest
+          image: 127.0.0.1:5000/service1:latest
           ports:
           - containerPort: 8080
             name: service1
-          volumeMounts:
-            - name: service1-data
-              mountPath: /var/www
           env:
             - name: API_PORT
-              value: 8080
+              value: "8080"
             - name: GRPC_SERVER_HOST
               value: service2-service.default.svc.cluster.local
             - name: GRPC_SERVER_PORT
-              value: 19003
+              value: "19003"
       volumes:
         - name: service1-data
           persistentVolumeClaim:

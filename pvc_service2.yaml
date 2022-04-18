@@ -9,4 +9,4 @@ spec:
   resources:
     requests:
       storage: 2Gi
-  storageClassName: pv-service2
+  storageClassName: sample

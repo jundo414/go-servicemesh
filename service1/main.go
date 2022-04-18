@@ -168,7 +168,17 @@ func CreateUsers(w http.ResponseWriter, r *http.Request, id string, name string,
 }
 
 func ShowUsers(w http.ResponseWriter, r *http.Request, id string) {
-	con, err := grpc.Dial("127.0.0.1:19003", grpc.WithInsecure())
+	ENV_GRPC_SERVER_HOST := os.Getenv("GRPC_SERVER_HOST")
+	if len(ENV_GRPC_SERVER_HOST) == 0 {
+		ENV_GRPC_SERVER_HOST = "localhost"
+	}
+
+	ENV_GRPC_SERVER_PORT := os.Getenv("GRPC_SERVER_PORT")
+	if len(ENV_GRPC_SERVER_PORT) == 0 {
+		ENV_GRPC_SERVER_PORT = "19003"
+	}
+
+	con, err := grpc.Dial(ENV_GRPC_SERVER_HOST+":"+ENV_GRPC_SERVER_PORT, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("client connection error:", err)
 	}
@@ -195,7 +205,17 @@ func ShowUsers(w http.ResponseWriter, r *http.Request, id string) {
 }
 
 func UpdateUsers(w http.ResponseWriter, r *http.Request, id string, name string, gender string, born string) {
-	con, err := grpc.Dial("127.0.0.1:19003", grpc.WithInsecure())
+	ENV_GRPC_SERVER_HOST := os.Getenv("GRPC_SERVER_HOST")
+	if len(ENV_GRPC_SERVER_HOST) == 0 {
+		ENV_GRPC_SERVER_HOST = "localhost"
+	}
+
+	ENV_GRPC_SERVER_PORT := os.Getenv("GRPC_SERVER_PORT")
+	if len(ENV_GRPC_SERVER_PORT) == 0 {
+		ENV_GRPC_SERVER_PORT = "19003"
+	}
+
+	con, err := grpc.Dial(ENV_GRPC_SERVER_HOST+":"+ENV_GRPC_SERVER_PORT, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("client connection error:", err)
 	}
@@ -224,7 +244,17 @@ func UpdateUsers(w http.ResponseWriter, r *http.Request, id string, name string,
 	json.NewEncoder(w).Encode(response)
 }
 func DeleteUsers(w http.ResponseWriter, r *http.Request, id string) {
-	con, err := grpc.Dial("127.0.0.1:19003", grpc.WithInsecure())
+	ENV_GRPC_SERVER_HOST := os.Getenv("GRPC_SERVER_HOST")
+	if len(ENV_GRPC_SERVER_HOST) == 0 {
+		ENV_GRPC_SERVER_HOST = "localhost"
+	}
+
+	ENV_GRPC_SERVER_PORT := os.Getenv("GRPC_SERVER_PORT")
+	if len(ENV_GRPC_SERVER_PORT) == 0 {
+		ENV_GRPC_SERVER_PORT = "19003"
+	}
+
+	con, err := grpc.Dial(ENV_GRPC_SERVER_HOST+":"+ENV_GRPC_SERVER_PORT, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("client connection error:", err)
 	}

@@ -22,7 +22,7 @@ type Profile struct {
 }
 
 func main() {
-	ENV_GRPC_SERVER_PORT := os.Genenv("GRPC_SERVER_PORT")
+	ENV_GRPC_SERVER_PORT := os.Getenv("GRPC_SERVER_PORT")
 	if len(ENV_GRPC_SERVER_PORT) == 0 {
 		ENV_GRPC_SERVER_PORT = "19003"
 	}
@@ -200,12 +200,12 @@ func (h *User) User(cts context.Context, req *pb.UserRequest) (*pb.UserProfile, 
 }
 
 func ClientRedis() *redis.Client {
-	ENV_REDIS_HOST := os.Genenv("REDIS_HOST")
+	ENV_REDIS_HOST := os.Getenv("REDIS_HOST")
 	if len(ENV_REDIS_HOST) == 0 {
 		ENV_REDIS_HOST = "localhost"
 	}
 
-	ENV_REDIS_PORT := os.Genenv("REDIS_PORT")
+	ENV_REDIS_PORT := os.Getenv("REDIS_PORT")
 	if len(ENV_REDIS_PORT) == 0 {
 		ENV_REDIS_PORT = "6379"
 	}

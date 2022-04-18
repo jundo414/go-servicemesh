@@ -1,21 +1,32 @@
-# syntax=docker/dockerfile:1
-
-FROM golang:1.16-alpine
+FROM golang:alpine3.15 AS builder
 
 WORKDIR /app
 
+# download the required Go dependencies
 COPY go.mod ./
 COPY go.sum ./
-
-
-COPY go.mod go.sum ./
 RUN go mod download
+COPY . ./
 
-COPY *.go ./
-COPY proto/ ./
-COPY models/ ./
+ARG CGO_ENABLED=0
+ARG GOOS=linux
+ARG GOARCH=amd64
 
-EXPOSE 19003/tcp
+RUN go build \
+    -o /go/bin/main \
+    -ldflags '-s -w'
 
-CMD [ "go", "run", "initialize_redis.go" ]
-CMD [ "go", "run", "main.go" ]
+WORKDIR /app/tools
+RUN go build \
+    -o /go/bin/initialize_redis \
+    -ldflags '-s -w'
+
+FROM scratch as runner
+
+COPY --from=builder /go/bin/initialize_redis /app/initialize_redis
+COPY --from=builder /go/bin/main /app/main
+
+EXPOSE 19003
+
+RUN ["/app/initialize_redis"]
+ENTRYPOINT ["/app/main"]

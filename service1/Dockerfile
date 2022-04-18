@@ -1,19 +1,27 @@
-# syntax=docker/dockerfile:1
-
-FROM golang:1.16-alpine
+FROM golang:alpine3.15 AS builder
 
 WORKDIR /app
 
+# download the required Go dependencies
 COPY go.mod ./
 COPY go.sum ./
-
-
-COPY go.mod go.sum ./
 RUN go mod download
+COPY . ./
 
-COPY *.go ./
-COPY proto/ ./
+RUN ls
 
-EXPOSE 8080/tcp
+ARG CGO_ENABLED=0
+ARG GOOS=linux
+ARG GOARCH=amd64
+RUN go build \
+    -o /go/bin/main \
+    -ldflags '-s -w'
 
-CMD [ "go", "run", "main.go" ]
+
+FROM scratch as runner
+
+COPY --from=builder /go/bin/main /app/main
+
+EXPOSE 8080
+
+ENTRYPOINT ["/app/main"]
